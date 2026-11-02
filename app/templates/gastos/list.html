@@ -1,46 +1,69 @@
 {% extends "base.html" %}
 {% block title %}Gastos · Barbería{% endblock %}
 {% block content %}
-<h1>Gastos operativos — semana</h1>
-<p class="muted">Del {{ inicio }} al {{ fin }}</p>
-<a class="btn" href="{{ url_for('gastos.nuevo') }}">+ Registrar gasto</a>
 
-{% if gastos %}
-<table>
-    <thead>
-        <tr>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-cash-coin"></i> Gastos operativos</h1>
+      <p class="muted mb-0">Semana del {{ inicio }} al {{ fin }}</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('gastos.nuevo') }}">
+      <i class="bi bi-plus-circle"></i> Registrar gasto
+    </a>
+  </div>
+
+  {% if gastos %}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
             <th>Fecha</th>
             <th>Descripción</th>
             <th>Categoría</th>
-            <th>Importe</th>
+            <th class="text-end">Importe</th>
+            <th>Pago</th>
             <th>Estado</th>
             <th></th>
-        </tr>
-    </thead>
-    <tbody>
+          </tr>
+        </thead>
+        <tbody>
         {% for g in gastos %}
-        <tr>
+          <tr {% if g.estado == 'anulada' %}style="opacity:.55;"{% endif %}>
             <td>{{ g.fecha }}</td>
-            <td>{{ g.descripcion }}</td>
-            <td>{{ g.categoria }}</td>
-            <td>${{ g.importe }}</td>
-            <td>{{ g.estado }}</td>
+            <td><strong>{{ g.descripcion }}</strong></td>
+            <td><span class="badge bg-secondary">{{ g.categoria }}</span></td>
+            <td class="text-end">${{ g.importe }}</td>
+            <td><span class="badge bg-dark">{{ g.metodo_pago }}</span></td>
             <td>
-                {% if g.estado == 'valida' %}
-                <form method="post" action="{{ url_for('gastos.anular', gasto_id=g.id) }}"
-                    data-confirm="¿Anular este gasto?">
-                    <input type="text" name="motivo" placeholder="Motivo" required>
-                    <button class="btn btn-secondary" type="submit">Anular</button>
-                </form>
-                {% else %}
-                <span class="muted">{{ g.motivo_anulacion }}</span>
-                {% endif %}
+              {% if g.estado == 'valida' %}
+                <span class="badge bg-success">válido</span>
+              {% else %}
+                <span class="badge bg-danger">anulado</span>
+              {% endif %}
             </td>
-        </tr>
+            <td>
+              {% if g.estado == 'valida' %}
+              <form method="post" action="{{ url_for('gastos.anular', gasto_id=g.id) }}"
+                    data-confirm="¿Anular este gasto?" class="inline-form">
+                <input type="text" name="motivo" placeholder="Motivo" required class="form-control form-control-sm">
+                <button class="btn btn-danger btn-sm" type="submit">
+                  <i class="bi bi-x-circle"></i> Anular
+                </button>
+              </form>
+              {% else %}
+                <span class="muted" style="font-size:.8rem;">{{ g.motivo_anulacion }}</span>
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p class="muted">Sin gastos registrados esta semana.</p>
-{% endif %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      <i class="bi bi-info-circle"></i> Sin gastos registrados esta semana.
+      <a href="{{ url_for('gastos.nuevo') }}" class="alert-link">Registrar el primero</a>
+    </div>
+  {% endif %}
+
 {% endblock %}

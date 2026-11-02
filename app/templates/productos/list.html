@@ -1,35 +1,61 @@
 {% extends "base.html" %}
 {% block title %}Productos · Barbería{% endblock %}
 {% block content %}
-<h1>Productos</h1>
-<a class="btn" href="{{ url_for('productos.nuevo') }}">+ Nuevo producto</a>
 
-{% if productos %}
-<table>
-    <thead>
-        <tr>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-box-seam"></i> Productos</h1>
+      <p class="muted mb-0">Catálogo con stock y costo promedio</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('productos.nuevo') }}">
+      <i class="bi bi-plus-circle"></i> Nuevo producto
+    </a>
+  </div>
+
+  {% if productos %}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
             <th>Nombre</th>
             <th>Código</th>
-            <th>Stock</th>
-            <th>CPM</th>
-            <th>Precio</th>
+            <th class="text-end">Stock</th>
+            <th class="text-end">CPM</th>
+            <th class="text-end">Precio venta</th>
             <th>Activo</th>
-        </tr>
-    </thead>
-    <tbody>
+          </tr>
+        </thead>
+        <tbody>
         {% for p in productos %}
-        <tr>
-            <td>{{ p.nombre }}</td>
-            <td>{{ p.codigo_interno or '—' }}</td>
-            <td>{{ p.stock_actual }}</td>
-            <td>${{ p.costo_promedio }}</td>
-            <td>${{ p.precio_venta }}</td>
-            <td>{{ 'Sí' if p.activo else 'No' }}</td>
-        </tr>
+          <tr {% if not p.activo %}style="opacity:.55;"{% endif %}>
+            <td><strong>{{ p.nombre }}</strong></td>
+            <td>{% if p.codigo_interno %}<span class="badge bg-dark">{{ p.codigo_interno }}</span>{% else %}<span class="muted">—</span>{% endif %}</td>
+            <td class="text-end">
+              {% if p.stock_actual > 0 %}
+                {{ p.stock_actual }}
+              {% else %}
+                <span class="badge bg-danger">0</span>
+              {% endif %}
+            </td>
+            <td class="text-end">${{ p.costo_promedio }}</td>
+            <td class="text-end">${{ p.precio_venta }}</td>
+            <td>
+              {% if p.activo %}
+                <span class="badge bg-success">activo</span>
+              {% else %}
+                <span class="badge bg-secondary">inactivo</span>
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
-    </tbody>
-</table>
-{% else %}
-<p class="muted">Sin productos.</p>
-{% endif %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      <i class="bi bi-info-circle"></i> Sin productos en el catálogo.
+      <a href="{{ url_for('productos.nuevo') }}" class="alert-link">Crear el primero</a>
+    </div>
+  {% endif %}
+
 {% endblock %}

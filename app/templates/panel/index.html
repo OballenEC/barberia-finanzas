@@ -1,70 +1,126 @@
 {% extends "base.html" %}
 {% block title %}Panel · Barbería{% endblock %}
 {% block content %}
-<h1>Panel</h1>
-<p class="muted">Semana del {{ lunes }} al {{ domingo }}</p>
 
-<section class="kpis">
-    <h2>Resumen del periodo</h2>
-    <table>
-        <tbody>
-            <tr>
-                <th>Ingresos por servicios</th>
-                <td>${{ kpis.ingresos_servicios }}</td>
-            </tr>
-            <tr>
-                <th>Ventas de productos</th>
-                <td>${{ kpis.ventas_productos }}</td>
-            </tr>
-            <tr>
-                <th>Gastos operativos</th>
-                <td>${{ kpis.gastos_operativos }}</td>
-            </tr>
-            <tr>
-                <th>Compras de inventario (info)</th>
-                <td>${{ kpis.compras_inventario }}</td>
-            </tr>
-            <tr>
-                <th>Costo de productos vendidos</th>
-                <td>${{ kpis.cogs }}</td>
-            </tr>
-            <tr>
-                <th>Margen bruto de productos</th>
-                <td>${{ kpis.margen_bruto_productos }}</td>
-            </tr>
-            <tr>
-                <th>Comisiones servicios</th>
-                <td>${{ kpis.comisiones_servicios }}</td>
-            </tr>
-            <tr>
-                <th>Comisiones productos</th>
-                <td>${{ kpis.comisiones_productos }}</td>
-            </tr>
-            <tr>
-                <th>Total comisiones</th>
-                <td><strong>${{ kpis.comisiones_total }}</strong></td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-speedometer2"></i> Panel</h1>
+      <p class="muted mb-0">Semana del {{ lunes }} al {{ domingo }}</p>
+    </div>
+    <form method="get" class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1" style="font-size:.75rem;">Semana de referencia</label>
+        <input type="date" name="semana" value="{{ lunes }}" class="form-control form-control-sm">
+      </div>
+      <button class="btn btn-primary btn-sm" type="submit">
+        <i class="bi bi-arrow-clockwise"></i> Ver
+      </button>
+    </form>
+  </div>
 
-<section class="resultado">
-    <h2>Resultado neto estimado</h2>
-    <p class="big-number">${{ kpis.resultado_neto_estimado }}</p>
-    <p class="muted">Estimación operativa, no utilidad contable ni fiscal.</p>
-    <p>Flujo de efectivo estimado: <strong>${{ kpis.flujo_efectivo_estimado }}</strong></p>
-    <p class="muted">
-        Las compras de inventario no restan del resultado. Solo se descuenta el
-        costo de lo efectivamente vendido (COGS).
-    </p>
-</section>
+  <div class="resultado-hero mb-4 {% if kpis.resultado_neto_estimado < 0 %}negative{% endif %}">
+    <div class="label"><i class="bi bi-trophy"></i> Resultado neto estimado</div>
+    <div class="value">${{ kpis.resultado_neto_estimado }}</div>
+    <div class="muted" style="font-size:.8rem;">
+      Ingresos + Ventas − COGS − Gastos − Comisiones
+    </div>
+  </div>
 
-<section class="accesos">
-    <h2>Accesos rápidos</h2>
-    <p>
-        <a class="btn" href="{{ url_for('reportes.semanal') }}">Reporte semanal</a>
-        <a class="btn" href="{{ url_for('reportes.diario') }}">Reporte diario</a>
-        <a class="btn" href="{{ url_for('reportes.barbero') }}">Reporte por barbero</a>
-    </p>
-</section>
+  <h2 class="mb-3"><i class="bi bi-graph-up-arrow"></i> Ingresos y gastos</h2>
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-gold">
+        <div class="kpi-label"><i class="bi bi-scissors"></i> Ingresos servicios</div>
+        <div class="kpi-value">${{ kpis.ingresos_servicios }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-gold">
+        <div class="kpi-label"><i class="bi bi-cart"></i> Ventas productos</div>
+        <div class="kpi-value">${{ kpis.ventas_productos }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label"><i class="bi bi-cash-coin"></i> Gastos operativos</div>
+        <div class="kpi-value">−${{ kpis.gastos_operativos }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-red">
+        <div class="kpi-label"><i class="bi bi-box"></i> Costo de productos vendidos</div>
+        <div class="kpi-value">−${{ kpis.cogs }}</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mb-3"><i class="bi bi-people"></i> Comisiones y márgenes</h2>
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-label"><i class="bi bi-scissors"></i> Comisiones servicios</div>
+        <div class="kpi-value">−${{ kpis.comisiones_servicios }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card">
+        <div class="kpi-label"><i class="bi bi-cart"></i> Comisiones productos</div>
+        <div class="kpi-value">−${{ kpis.comisiones_productos }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-gold">
+        <div class="kpi-label"><i class="bi bi-wallet2"></i> Total comisiones</div>
+        <div class="kpi-value">${{ kpis.comisiones_total }}</div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="kpi-card kpi-gold">
+        <div class="kpi-label"><i class="bi bi-percent"></i> Margen bruto productos</div>
+        <div class="kpi-value">${{ kpis.margen_bruto_productos }}</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mb-3"><i class="bi bi-info-circle"></i> Flujo e inventario (informativo)</h2>
+  <div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="kpi-card kpi-muted">
+        <div class="kpi-label"><i class="bi bi-cash-stack"></i> Compras de inventario</div>
+        <div class="kpi-value">${{ kpis.compras_inventario }}</div>
+        <div class="muted mt-1" style="font-size:.75rem;">
+          Informativo: no resta del resultado neto.
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-6">
+      <div class="kpi-card kpi-muted">
+        <div class="kpi-label"><i class="bi bi-arrow-left-right"></i> Flujo de efectivo estimado</div>
+        <div class="kpi-value">${{ kpis.flujo_efectivo_estimado }}</div>
+        <div class="muted mt-1" style="font-size:.75rem;">
+          Considera compras pagadas. Distinto del resultado neto.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="mb-3"><i class="bi bi-lightning"></i> Accesos rápidos</h2>
+  <div class="d-flex flex-wrap gap-2">
+    <a class="btn btn-primary" href="{{ url_for('reportes.semanal') }}">
+      <i class="bi bi-graph-up"></i> Reporte semanal
+    </a>
+    <a class="btn btn-primary" href="{{ url_for('reportes.diario') }}">
+      <i class="bi bi-calendar-day"></i> Reporte diario
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('reportes.barbero') }}">
+      <i class="bi bi-people"></i> Por barbero
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('servicios.nuevo') }}">
+      <i class="bi bi-plus-circle"></i> Registrar servicio
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('ventas.nueva') }}">
+      <i class="bi bi-plus-circle"></i> Registrar venta
+    </a>
+  </div>
+
 {% endblock %}

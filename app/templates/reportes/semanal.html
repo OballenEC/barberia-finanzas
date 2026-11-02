@@ -1,91 +1,130 @@
 {% extends "base.html" %}
 {% block title %}Reporte semanal · Barbería{% endblock %}
 {% block content %}
-  <h1>Reporte semanal</h1>
-  <p class="muted">Semana del {{ data.lunes }} al {{ data.domingo }} (corte dominical)</p>
 
-  <form method="get" class="filtro-fecha">
-    <label>Semana de referencia:</label>
-    <input type="date" name="semana" value="{{ data.lunes }}">
-    <button class="btn" type="submit">Ver</button>
-  </form>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-graph-up"></i> Reporte semanal</h1>
+      <p class="muted mb-0">{{ data.lunes }} → {{ data.domingo }} (corte dominical)</p>
+    </div>
+    <form method="get" class="d-flex gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1" style="font-size:.75rem;">Semana de referencia</label>
+        <input type="date" name="semana" value="{{ data.lunes }}" class="form-control form-control-sm">
+      </div>
+      <button class="btn btn-primary btn-sm" type="submit">
+        <i class="bi bi-arrow-clockwise"></i> Ver
+      </button>
+    </form>
+  </div>
 
-  <h2>Comparación con la semana anterior</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Concepto</th>
-        <th>Esta semana<br>({{ data.lunes }} → {{ data.domingo }})</th>
-        <th>Semana anterior<br>({{ data.lunes_anterior }} → {{ data.domingo_anterior }})</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><th>Ingresos por servicios</th>
-          <td>${{ data.kpis_actual.ingresos_servicios }}</td>
-          <td>${{ data.kpis_anterior.ingresos_servicios }}</td></tr>
-      <tr><th>Ventas de productos</th>
-          <td>${{ data.kpis_actual.ventas_productos }}</td>
-          <td>${{ data.kpis_anterior.ventas_productos }}</td></tr>
-      <tr><th>Costo de productos vendidos (COGS)</th>
-          <td>−${{ data.kpis_actual.cogs }}</td>
-          <td>−${{ data.kpis_anterior.cogs }}</td></tr>
-      <tr><th>Gastos operativos</th>
-          <td>−${{ data.kpis_actual.gastos_operativos }}</td>
-          <td>−${{ data.kpis_anterior.gastos_operativos }}</td></tr>
-      <tr><th>Comisiones servicios</th>
-          <td>−${{ data.kpis_actual.comisiones_servicios }}</td>
-          <td>−${{ data.kpis_anterior.comisiones_servicios }}</td></tr>
-      <tr><th>Comisiones productos</th>
-          <td>−${{ data.kpis_actual.comisiones_productos }}</td>
-          <td>−${{ data.kpis_anterior.comisiones_productos }}</td></tr>
-      <tr style="border-top: 2px solid #333;">
-          <th><strong>Resultado neto estimado</strong></th>
-          <td><strong>${{ data.kpis_actual.resultado_neto_estimado }}</strong></td>
-          <td><strong>${{ data.kpis_anterior.resultado_neto_estimado }}</strong></td></tr>
-    </tbody>
-  </table>
+  <div class="resultado-hero mb-4 {% if data.kpis_actual.resultado_neto_estimado < 0 %}negative{% endif %}">
+    <div class="label"><i class="bi bi-trophy"></i> Resultado neto de la semana</div>
+    <div class="value">${{ data.kpis_actual.resultado_neto_estimado }}</div>
+    <div class="muted" style="font-size:.8rem;">Semana anterior: ${{ data.kpis_anterior.resultado_neto_estimado }}</div>
+  </div>
 
-  <p class="muted">
+  <h2 class="mb-3"><i class="bi bi-arrow-left-right"></i> Comparación con la semana anterior</h2>
+  <div class="table-responsive mb-4">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Concepto</th>
+          <th class="text-end">Esta semana</th>
+          <th class="text-end">Semana anterior</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><i class="bi bi-scissors"></i> Ingresos por servicios</td>
+          <td class="text-end">${{ data.kpis_actual.ingresos_servicios }}</td>
+          <td class="text-end muted">${{ data.kpis_anterior.ingresos_servicios }}</td>
+        </tr>
+        <tr>
+          <td><i class="bi bi-cart"></i> Ventas de productos</td>
+          <td class="text-end">${{ data.kpis_actual.ventas_productos }}</td>
+          <td class="text-end muted">${{ data.kpis_anterior.ventas_productos }}</td>
+        </tr>
+        <tr>
+          <td><i class="bi bi-box"></i> Costo de productos vendidos (COGS)</td>
+          <td class="text-end">−${{ data.kpis_actual.cogs }}</td>
+          <td class="text-end muted">−${{ data.kpis_anterior.cogs }}</td>
+        </tr>
+        <tr>
+          <td><i class="bi bi-cash-coin"></i> Gastos operativos</td>
+          <td class="text-end">−${{ data.kpis_actual.gastos_operativos }}</td>
+          <td class="text-end muted">−${{ data.kpis_anterior.gastos_operativos }}</td>
+        </tr>
+        <tr>
+          <td><i class="bi bi-people"></i> Comisiones servicios</td>
+          <td class="text-end">−${{ data.kpis_actual.comisiones_servicios }}</td>
+          <td class="text-end muted">−${{ data.kpis_anterior.comisiones_servicios }}</td>
+        </tr>
+        <tr>
+          <td><i class="bi bi-people"></i> Comisiones productos</td>
+          <td class="text-end">−${{ data.kpis_actual.comisiones_productos }}</td>
+          <td class="text-end muted">−${{ data.kpis_anterior.comisiones_productos }}</td>
+        </tr>
+        <tr style="border-top: 2px solid var(--bb-gold);">
+          <td><strong><i class="bi bi-trophy"></i> Resultado neto estimado</strong></td>
+          <td class="text-end"><strong style="color: var(--bb-gold);">${{ data.kpis_actual.resultado_neto_estimado }}</strong></td>
+          <td class="text-end muted"><strong>${{ data.kpis_anterior.resultado_neto_estimado }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="muted" style="font-size:.85rem;">
     Compras de inventario esta semana: ${{ data.kpis_actual.compras_inventario }} (informativo, no afecta resultado).
     Flujo de efectivo estimado: ${{ data.kpis_actual.flujo_efectivo_estimado }}.
   </p>
 
-  <h2>Desglose por barbero</h2>
+  <h2 class="mb-3"><i class="bi bi-people"></i> Desglose por barbero</h2>
   {% if data.por_barbero %}
-    <table>
-      <thead>
-        <tr>
-          <th>Barbero</th>
-          <th>Servicios</th>
-          <th>Ingresos svc</th>
-          <th>Comisión svc</th>
-          <th>Ventas prod</th>
-          <th>Ingresos prod</th>
-          <th>Comisión prod</th>
-          <th>Total comisión</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for b in data.por_barbero %}
-        <tr>
-          <td>{{ b.nombre }}</td>
-          <td>{{ b.num_servicios }}</td>
-          <td>${{ b.ingresos_svc }}</td>
-          <td>${{ b.comision_svc }}</td>
-          <td>{{ b.num_ventas_prod }}</td>
-          <td>${{ b.ventas_prod }}</td>
-          <td>${{ b.comision_prod }}</td>
-          <td><strong>${{ b.comision_total }}</strong></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    <div class="table-responsive mb-4">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Barbero</th>
+            <th class="text-end">Servicios</th>
+            <th class="text-end">Ingresos svc</th>
+            <th class="text-end">Comisión svc</th>
+            <th class="text-end">Ventas prod</th>
+            <th class="text-end">Ingresos prod</th>
+            <th class="text-end">Comisión prod</th>
+            <th class="text-end">Total comisión</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for b in data.por_barbero %}
+          <tr>
+            <td><strong>{{ b.nombre }}</strong></td>
+            <td class="text-end">{{ b.num_servicios }}</td>
+            <td class="text-end">${{ b.ingresos_svc }}</td>
+            <td class="text-end">${{ b.comision_svc }}</td>
+            <td class="text-end">{{ b.num_ventas_prod }}</td>
+            <td class="text-end">${{ b.ventas_prod }}</td>
+            <td class="text-end">${{ b.comision_prod }}</td>
+            <td class="text-end"><strong style="color: var(--bb-gold);">${{ b.comision_total }}</strong></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% else %}
-    <p class="muted">Sin barberos activos.</p>
+    <div class="alert alert-warning mb-4">Sin barberos activos.</div>
   {% endif %}
 
-  <p>
-    <a class="btn" href="{{ url_for('reportes.diario') }}">Ver un día específico</a>
-    <a class="btn btn-secondary" href="{{ url_for('reportes.barbero') }}">Reporte detallado por barbero</a>
-  </p>
+  <div class="d-flex flex-wrap gap-2 mt-4">
+    <a class="btn btn-primary" href="{{ url_for('reportes.diario') }}">
+      <i class="bi bi-calendar-day"></i> Ver un día específico
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('reportes.barbero') }}">
+      <i class="bi bi-people"></i> Reporte por barbero
+    </a>
+    <a class="btn btn-secondary" href="{{ url_for('panel.index') }}">
+      <i class="bi bi-speedometer2"></i> Volver al panel
+    </a>
+  </div>
+
 {% endblock %}

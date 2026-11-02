@@ -1,113 +1,128 @@
 {% extends "base.html" %}
 {% block title %}Reporte por barbero · Barbería{% endblock %}
 {% block content %}
-<h1>Reporte por barbero</h1>
-<p class="muted">Semana del {{ lunes }} al {{ domingo }}</p>
 
-<form method="get" class="filtro-fecha">
-    <label>Semana de referencia:</label>
-    <input type="date" name="semana" value="{{ lunes }}">
-    <label>Barbero:</label>
-    <select name="barbero_id">
-        <option value="">— Todos —</option>
-        {% for b in barberos %}
-        <option value="{{ b.id }}" {% if barbero_id_sel==b.id %}selected{% endif %}>
-            {{ b.nombre }}
-        </option>
-        {% endfor %}
-    </select>
-    <button class="btn" type="submit">Ver</button>
-</form>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-people"></i> Reporte por barbero</h1>
+      <p class="muted mb-0">{{ lunes }} → {{ domingo }}</p>
+    </div>
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-end">
+      <div>
+        <label class="form-label mb-1" style="font-size:.75rem;">Semana</label>
+        <input type="date" name="semana" value="{{ lunes }}" class="form-control form-control-sm">
+      </div>
+      <div>
+        <label class="form-label mb-1" style="font-size:.75rem;">Barbero</label>
+        <select name="barbero_id" class="form-select form-select-sm">
+          <option value="">— Todos —</option>
+          {% for b in barberos %}
+            <option value="{{ b.id }}" {% if barbero_id_sel == b.id %}selected{% endif %}>{{ b.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button class="btn btn-primary btn-sm" type="submit">
+        <i class="bi bi-arrow-clockwise"></i> Ver
+      </button>
+    </form>
+  </div>
 
-{% if filas %}
-{% for b in filas %}
-<section class="barbero-card">
-    <h2>{{ b.nombre }}</h2>
-    <p class="muted">% por defecto: {{ b.comision_pct_default }}%</p>
+  {% if filas %}
+    {% for b in filas %}
+      <div class="card mb-4" style="border-top: 3px solid var(--bb-gold) !important;">
+        <div class="card-body p-4">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+              <h2 class="mb-0" style="color: var(--bb-ink);"><i class="bi bi-person-badge"></i> {{ b.nombre }}</h2>
+              <p class="muted mb-0" style="font-size:.85rem;">Comisión por defecto: {{ b.comision_pct_default }}%</p>
+            </div>
+            <div class="text-end">
+              <div class="muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;">Total a pagar</div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--bb-gold);line-height:1;">
+                ${{ b.comision_total }}
+              </div>
+            </div>
+          </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th></th>
-                <th># Operaciones</th>
-                <th>Ingresos</th>
-                <th>Comisión</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>Servicios</th>
-                <td>{{ b.num_servicios }}</td>
-                <td>${{ b.ingresos_svc }}</td>
-                <td>${{ b.comision_svc }}</td>
-            </tr>
-            <tr>
-                <th>Ventas de producto</th>
-                <td>{{ b.num_ventas_prod }}</td>
-                <td>${{ b.ingresos_prod }}</td>
-                <td>${{ b.comision_prod }}</td>
-            </tr>
-            <tr style="border-top: 2px solid #333;">
-                <th><strong>Total</strong></th>
-                <td>{{ b.num_servicios + b.num_ventas_prod }}</td>
-                <td><strong>${{ b.ingresos_svc + b.ingresos_prod }}</strong></td>
-                <td><strong>${{ b.comision_total }}</strong></td>
-            </tr>
-        </tbody>
-    </table>
+          <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+              <div class="kpi-card">
+                <div class="kpi-label">Servicios</div>
+                <div class="kpi-value">{{ b.num_servicios }}</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card">
+                <div class="kpi-label">Ingresos svc</div>
+                <div class="kpi-value">${{ b.ingresos_svc }}</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card">
+                <div class="kpi-label">Comisión svc</div>
+                <div class="kpi-value">${{ b.comision_svc }}</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="kpi-card">
+                <div class="kpi-label">Comisión prod</div>
+                <div class="kpi-value">${{ b.comision_prod }}</div>
+              </div>
+            </div>
+          </div>
 
-    {% if b.detalle_servicios %}
-    <h3>Detalle de servicios</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Servicio</th>
-                <th>Precio</th>
-                <th>Comisión</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for s in b.detalle_servicios %}
-            <tr>
-                <td>{{ s.fecha_hora[:16] }}</td>
-                <td>{{ s.servicio_nombre }}</td>
-                <td>${{ s.precio_cobrado }}</td>
-                <td>${{ s.comision_monto or '0.00' }} ({{ s.comision_pct or '—' }}%)</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
+          {% if b.detalle_servicios %}
+            <h3 class="mt-4 mb-2" style="font-size:1rem;"><i class="bi bi-scissors"></i> Detalle de servicios</h3>
+            <div class="table-responsive">
+              <table class="table table-striped align-middle mb-0">
+                <thead><tr><th>Fecha</th><th>Servicio</th><th class="text-end">Precio</th><th class="text-end">Comisión</th></tr></thead>
+                <tbody>
+                {% for s in b.detalle_servicios %}
+                  <tr>
+                    <td>{{ s.fecha_hora[:16] }}</td>
+                    <td>{{ s.servicio_nombre }}</td>
+                    <td class="text-end">${{ s.precio_cobrado }}</td>
+                    <td class="text-end">${{ s.comision_monto or '0.00' }} <span class="muted">({{ s.comision_pct or '—' }}%)</span></td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
 
-    {% if b.detalle_productos %}
-    <h3>Detalle de ventas de producto</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Producto</th>
-                <th>Cant.</th>
-                <th>Total</th>
-                <th>Comisión</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in b.detalle_productos %}
-            <tr>
-                <td>{{ p.fecha }}</td>
-                <td>{{ p.producto_nombre }}</td>
-                <td>{{ p.cantidad }}</td>
-                <td>${{ p.total_venta }}</td>
-                <td>${{ p.comision_monto or '0.00' }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-</section>
-{% endfor %}
-{% else %}
-<p class="muted">Sin datos para el periodo seleccionado.</p>
-{% endif %}
+          {% if b.detalle_productos %}
+            <h3 class="mt-4 mb-2" style="font-size:1rem;"><i class="bi bi-cart"></i> Detalle de ventas de producto</h3>
+            <div class="table-responsive">
+              <table class="table table-striped align-middle mb-0">
+                <thead><tr><th>Fecha</th><th>Producto</th><th class="text-end">Cant.</th><th class="text-end">Total</th><th class="text-end">Comisión</th></tr></thead>
+                <tbody>
+                {% for p in b.detalle_productos %}
+                  <tr>
+                    <td>{{ p.fecha }}</td>
+                    <td>{{ p.producto_nombre }}</td>
+                    <td class="text-end">{{ p.cantidad }}</td>
+                    <td class="text-end">${{ p.total_venta }}</td>
+                    <td class="text-end">${{ p.comision_monto or '0.00' }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
+
+          {% if not b.detalle_servicios and not b.detalle_productos %}
+            <div class="alert alert-warning mb-0 mt-3">Sin actividad en el periodo.</div>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="alert alert-warning">Sin datos para el periodo seleccionado.</div>
+  {% endif %}
+
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <a class="btn btn-primary" href="{{ url_for('reportes.semanal') }}"><i class="bi bi-graph-up"></i> Ver semanal</a>
+    <a class="btn btn-secondary" href="{{ url_for('panel.index') }}"><i class="bi bi-speedometer2"></i> Volver al panel</a>
+  </div>
+
 {% endblock %}

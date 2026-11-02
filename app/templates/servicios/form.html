@@ -1,43 +1,82 @@
 {% extends "base.html" %}
 {% block title %}Nuevo servicio · Barbería{% endblock %}
 {% block content %}
-<h1>Registrar servicio</h1>
-<form method="post">
-    <label>Servicio</label>
-    <select name="servicio_id" required>
-        {% for s in servicios %}
-        <option value="{{ s.id }}">{{ s.nombre }} — ${{ s.precio_sugerido }}</option>
-        {% endfor %}
-    </select>
 
-    <label>Barbero</label>
-    <select name="barbero_id">
-        <option value="">— Sin asignar —</option>
-        {% for b in barberos %}
-        <option value="{{ b.id }}">{{ b.nombre }} ({{ b.comision_pct_default }}%)</option>
-        {% endfor %}
-    </select>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-plus-circle"></i> Registrar servicio</h1>
+      <p class="muted mb-0">Registra un corte, barba o servicio combinado</p>
+    </div>
+    <a class="btn btn-secondary" href="{{ url_for('servicios.listado') }}">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+  </div>
 
-    <label>Comisión % (opcional, sobreescribe default)</label>
-    <input type="text" name="comision_pct_override" inputmode="decimal"
-        placeholder="35.00 o 40.00 — vacío = usar default del barbero">
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="post">
 
-    <label>Fecha y hora</label>
-    <input type="datetime-local" name="fecha_hora" value="{{ ahora }}" required>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-scissors"></i> Servicio</label>
+            <select name="servicio_id" required class="form-select">
+              {% for s in servicios %}
+                <option value="{{ s.id }}">{{ s.nombre }} — ${{ s.precio_sugerido }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-    <label>Precio cobrado</label>
-    <input type="text" name="precio_cobrado" inputmode="decimal" required>
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-person-badge"></i> Barbero</label>
+            <select name="barbero_id" class="form-select">
+              <option value="">— Sin asignar —</option>
+              {% for b in barberos %}
+                <option value="{{ b.id }}">{{ b.nombre }} ({{ b.comision_pct_default }}%)</option>
+              {% endfor %}
+            </select>
+          </div>
 
-    <label>Método de pago</label>
-    <select name="metodo_pago" required>
-        <option value="efectivo">Efectivo</option>
-        <option value="tarjeta">Tarjeta</option>
-        <option value="transferencia">Transferencia</option>
-        <option value="otro">Otro</option>
-    </select>
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-percent"></i> Comisión % (opcional)</label>
+            <input type="text" name="comision_pct_override" inputmode="decimal"
+                   placeholder="35.00 o 40.00 — vacío = usar default del barbero"
+                   class="form-control">
+            <div class="muted mt-1" style="font-size:.75rem;">
+              Si lo dejas vacío, se usa el % por defecto del barbero.
+            </div>
+          </div>
 
-    <p><button class="btn" type="submit">Guardar</button>
-        <a href="{{ url_for('servicios.listado') }}">Cancelar</a>
-    </p>
-</form>
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-calendar-event"></i> Fecha y hora</label>
+            <input type="datetime-local" name="fecha_hora" value="{{ ahora }}" required class="form-control">
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-currency-dollar"></i> Precio cobrado</label>
+            <input type="text" name="precio_cobrado" inputmode="decimal" required class="form-control"
+                   placeholder="100.00">
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-wallet2"></i> Método de pago</label>
+            <select name="metodo_pago" required class="form-select">
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta">Tarjeta</option>
+              <option value="transferencia">Transferencia</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-check-circle"></i> Guardar
+          </button>
+          <a class="btn btn-secondary" href="{{ url_for('servicios.listado') }}">Cancelar</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
 {% endblock %}

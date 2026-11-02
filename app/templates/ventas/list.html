@@ -1,46 +1,71 @@
 {% extends "base.html" %}
 {% block title %}Ventas producto · Barbería{% endblock %}
 {% block content %}
-<h1>Ventas de producto — semana</h1>
-<p class="muted">Del {{ inicio }} al {{ fin }}</p>
-<a class="btn" href="{{ url_for('ventas.nueva') }}">+ Registrar venta</a>
 
-{% if ventas %}
-<table>
-    <thead>
-        <tr>
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-cart"></i> Ventas de producto</h1>
+      <p class="muted mb-0">Semana del {{ inicio }} al {{ fin }}</p>
+    </div>
+    <a class="btn btn-primary" href="{{ url_for('ventas.nueva') }}">
+      <i class="bi bi-plus-circle"></i> Registrar venta
+    </a>
+  </div>
+
+  {% if ventas %}
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
             <th>Fecha</th>
             <th>Producto</th>
-            <th>Cant.</th>
-            <th>P. unit</th>
-            <th>Total</th>
-            <th>COGS</th>
+            <th class="text-end">Cant.</th>
+            <th class="text-end">P. unit</th>
+            <th class="text-end">Total</th>
+            <th class="text-end">COGS</th>
             <th>Estado</th>
             <th></th>
-        </tr>
-    </thead>
-    <tbody>
+          </tr>
+        </thead>
+        <tbody>
         {% for v in ventas %}
-        <tr>
+          <tr {% if v.estado == 'anulada' %}style="opacity:.55;"{% endif %}>
             <td>{{ v.fecha }}</td>
-            <td>{{ v.producto_nombre }}</td>
-            <td>{{ v.cantidad }}</td>
-            <td>${{ v.precio_unitario }}</td>
-            <td>${{ v.total_venta }}</td>
-            <td>${{ v.costo_total_snapshot }}</td>
-            <td>{{ v.estado }}</td>
+            <td><strong>{{ v.producto_nombre }}</strong></td>
+            <td class="text-end">{{ v.cantidad }}</td>
+            <td class="text-end">${{ v.precio_unitario }}</td>
+            <td class="text-end">${{ v.total_venta }}</td>
+            <td class="text-end muted">${{ v.costo_total_snapshot }}</td>
             <td>
-                {% if v.estado == 'valida' %}
-                <form method="post" action="{{ url_for('ventas.anular', venta_id=v.id) }}"
-                    data-confirm="¿Anular esta venta?">
-                    <input type="text" name="motivo" placeholder="Motivo" required>
-                    <button class="btn btn-secondary" type="submit">Anular</button>
-                </form>
-                {% else %}<span class="muted">{{ v.motivo_anulacion }}</span>{% endif %}
+              {% if v.estado == 'valida' %}
+                <span class="badge bg-success">válida</span>
+              {% else %}
+                <span class="badge bg-danger">anulada</span>
+              {% endif %}
             </td>
-        </tr>
+            <td>
+              {% if v.estado == 'valida' %}
+              <form method="post" action="{{ url_for('ventas.anular', venta_id=v.id) }}"
+                    data-confirm="¿Anular esta venta?" class="inline-form">
+                <input type="text" name="motivo" placeholder="Motivo" required class="form-control form-control-sm">
+                <button class="btn btn-danger btn-sm" type="submit">
+                  <i class="bi bi-x-circle"></i> Anular
+                </button>
+              </form>
+              {% else %}
+                <span class="muted" style="font-size:.8rem;">{{ v.motivo_anulacion }}</span>
+              {% endif %}
+            </td>
+          </tr>
         {% endfor %}
-    </tbody>
-</table>
-{% else %}<p class="muted">Sin ventas esta semana.</p>{% endif %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">
+      <i class="bi bi-info-circle"></i> Sin ventas de producto esta semana.
+      <a href="{{ url_for('ventas.nueva') }}" class="alert-link">Registrar la primera</a>
+    </div>
+  {% endif %}
+
 {% endblock %}

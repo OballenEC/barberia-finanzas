@@ -1,20 +1,58 @@
 {% extends "base.html" %}
 {% block title %}Nuevo producto · Barbería{% endblock %}
 {% block content %}
-<h1>Nuevo producto</h1>
-<form method="post">
-    <label>Nombre</label>
-    <input type="text" name="nombre" required>
 
-    <label>Código interno (opcional)</label>
-    <input type="text" name="codigo_interno">
+  <div class="page-header">
+    <div>
+      <h1><i class="bi bi-plus-circle"></i> Nuevo producto</h1>
+      <p class="muted mb-0">El stock y el costo se calculan al registrar compras</p>
+    </div>
+    <a class="btn btn-secondary" href="{{ url_for('productos.listado') }}">
+      <i class="bi bi-arrow-left"></i> Volver
+    </a>
+  </div>
 
-    <label>Precio de venta</label>
-    <input type="text" name="precio_venta" inputmode="decimal" required>
+  <div class="card">
+    <div class="card-body p-4">
+      <form method="post">
 
-    <p class="muted">Las existencias y el costo promedio se calculan al registrar compras.</p>
-    <p><button class="btn" type="submit">Guardar</button>
-        <a href="{{ url_for('productos.listado') }}">Cancelar</a>
-    </p>
-</form>
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label"><i class="bi bi-box"></i> Nombre</label>
+            <input type="text" name="nombre" required class="form-control"
+                   placeholder="Ej. Cera para cabello, Shampoo, etc.">
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-upc"></i> Código interno (opcional)</label>
+            <input type="text" name="codigo_interno" class="form-control"
+                   placeholder="Ej. PROD-CERA">
+            <div class="muted mt-1" style="font-size:.75rem;">
+              SKU o código único. Útil para búsquedas.
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label class="form-label"><i class="bi bi-currency-dollar"></i> Precio de venta</label>
+            <input type="text" name="precio_venta" inputmode="decimal" required class="form-control"
+                   placeholder="150.00">
+          </div>
+        </div>
+
+        <div class="alert alert-warning mt-3 mb-0" style="font-size:.85rem;">
+          <i class="bi bi-info-circle"></i>
+          El stock inicial es 0. Para que tenga stock, registra una <strong>compra</strong> en la sección Inventario.
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-check-circle"></i> Guardar
+          </button>
+          <a class="btn btn-secondary" href="{{ url_for('productos.listado') }}">Cancelar</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
 {% endblock %}
