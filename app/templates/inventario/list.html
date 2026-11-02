@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Inventario · Barbería{% endblock %}
+{% block content %}
+<h1>Inventario</h1>
+<p>
+    <a class="btn" href="{{ url_for('inventario.nueva_compra') }}">+ Compra</a>
+    <a class="btn btn-secondary" href="{{ url_for('inventario.nuevo_ajuste') }}">+ Ajuste</a>
+</p>
+
+<h2>Compras de la semana ({{ inicio }} → {{ fin }})</h2>
+{% if compras %}
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Costo u.</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in compras %}
+        <tr>
+            <td>{{ c.fecha }}</td>
+            <td>{{ c.producto_nombre }}</td>
+            <td>{{ c.cantidad }}</td>
+            <td>${{ c.costo_unitario }}</td>
+            <td>${{ c.total }}</td>
+            <td>{{ c.estado }}</td>
+            <td>
+                {% if c.estado == 'valida' %}
+                <form method="post" action="{{ url_for('inventario.anular_compra', compra_id=c.id) }}"
+                    data-confirm="¿Anular esta compra?">
+                    <input type="text" name="motivo" placeholder="Motivo" required>
+                    <button class="btn btn-secondary" type="submit">Anular</button>
+                </form>
+                {% else %}<span class="muted">{{ c.motivo_anulacion }}</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}<p class="muted">Sin compras esta semana.</p>{% endif %}
+
+<h2>Ajustes registrados</h2>
+{% if ajustes %}
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Δ</th>
+            <th>Motivo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in ajustes %}
+        <tr>
+            <td>{{ a.fecha }}</td>
+            <td>{{ a.producto_nombre }}</td>
+            <td>{{ a.cantidad_delta }}</td>
+            <td>{{ a.motivo }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}<p class="muted">Sin ajustes.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Nuevo producto · Barbería{% endblock %}
+{% block content %}
+<h1>Nuevo producto</h1>
+<form method="post">
+    <label>Nombre</label>
+    <input type="text" name="nombre" required>
+
+    <label>Código interno (opcional)</label>
+    <input type="text" name="codigo_interno">
+
+    <label>Precio de venta</label>
+    <input type="text" name="precio_venta" inputmode="decimal" required>
+
+    <p class="muted">Las existencias y el costo promedio se calculan al registrar compras.</p>
+    <p><button class="btn" type="submit">Guardar</button>
+        <a href="{{ url_for('productos.listado') }}">Cancelar</a>
+    </p>
+</form>
+{% endblock %}

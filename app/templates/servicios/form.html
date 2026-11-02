@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Nuevo servicio · Barbería{% endblock %}
+{% block content %}
+<h1>Registrar servicio</h1>
+<form method="post">
+    <label>Servicio</label>
+    <select name="servicio_id" required>
+        {% for s in servicios %}
+        <option value="{{ s.id }}">{{ s.nombre }} — ${{ s.precio_sugerido }}</option>
+        {% endfor %}
+    </select>
+
+    <label>Fecha y hora</label>
+    <input type="datetime-local" name="fecha_hora" value="{{ ahora }}" required>
+
+    <label>Precio cobrado</label>
+    <input type="text" name="precio_cobrado" inputmode="decimal" required>
+
+    <label>Método de pago</label>
+    <select name="metodo_pago" required>
+        <option value="efectivo">Efectivo</option>
+        <option value="tarjeta">Tarjeta</option>
+        <option value="transferencia">Transferencia</option>
+        <option value="otro">Otro</option>
+    </select>
+
+    <p><button class="btn" type="submit">Guardar</button>
+        <a href="{{ url_for('servicios.listado') }}">Cancelar</a>
+    </p>
+</form>
+{% endblock %}

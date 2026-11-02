@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Productos · Barbería{% endblock %}
+{% block content %}
+<h1>Productos</h1>
+<a class="btn" href="{{ url_for('productos.nuevo') }}">+ Nuevo producto</a>
+
+{% if productos %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Código</th>
+            <th>Stock</th>
+            <th>CPM</th>
+            <th>Precio</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in productos %}
+        <tr>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.codigo_interno or '—' }}</td>
+            <td>{{ p.stock_actual }}</td>
+            <td>${{ p.costo_promedio }}</td>
+            <td>${{ p.precio_venta }}</td>
+            <td>{{ 'Sí' if p.activo else 'No' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">Sin productos.</p>
+{% endif %}
+{% endblock %}

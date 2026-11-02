@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Barbería · Finanzas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+
+<body>
+    {% if demo_mode %}
+    <div class="demo-banner">MODO DEMO · datos ficticios</div>
+    {% endif %}
+    <header class="topbar">
+        <a href="{{ url_for('panel.index') }}" class="brand">Barbería</a>
+        <nav class="nav">
+            <a href="{{ url_for('panel.index') }}">Panel</a>
+            <a href="{{ url_for('servicios.listado') }}">Servicios</a>
+            <a href="{{ url_for('gastos.listado') }}">Gastos</a>
+            <a href="{{ url_for('productos.listado') }}">Productos</a>
+            <a href="{{ url_for('inventario.listado') }}">Inventario</a>
+            <a href="{{ url_for('ventas.listado') }}">Ventas</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+
+</html>

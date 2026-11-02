@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Servicios · Barbería{% endblock %}
+{% block content %}
+<h1>Servicios — semana</h1>
+<p class="muted">Del {{ inicio }} al {{ fin }}</p>
+<a class="btn" href="{{ url_for('servicios.nuevo') }}">+ Registrar servicio</a>
+
+{% if ventas %}
+<table>
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Servicio</th>
+      <th>Precio</th>
+      <th>Pago</th>
+      <th>Estado</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for v in ventas %}
+    <tr>
+      <td>{{ v.fecha_hora[:16] }}</td>
+      <td>{{ v.servicio_nombre }}</td>
+      <td>${{ v.precio_cobrado }}</td>
+      <td>{{ v.metodo_pago }}</td>
+      <td>{{ v.estado }}</td>
+      <td>
+        {% if v.estado == 'valida' %}
+        <form method="post" action="{{ url_for('servicios.anular', venta_id=v.id) }}"
+          data-confirm="¿Anular esta venta?">
+          <input type="text" name="motivo" placeholder="Motivo" required>
+          <button class="btn btn-secondary" type="submit">Anular</button>
+        </form>
+        {% else %}
+        <span class="muted">{{ v.motivo_anulacion }}</span>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="muted">Sin servicios registrados esta semana.</p>
+{% endif %}
+{% endblock %}

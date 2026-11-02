@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Nueva venta · Barbería{% endblock %}
+{% block content %}
+<h1>Registrar venta de producto</h1>
+<form method="post">
+    <label>Fecha</label>
+    <input type="date" name="fecha" value="{{ hoy }}" required>
+
+    <label>Producto</label>
+    <select name="producto_id" required>
+        {% for p in productos %}<option value="{{ p.id }}">{{ p.nombre }} (stock {{ p.stock_actual }}, CPM ${{
+            p.costo_promedio }})</option>{% endfor %}
+    </select>
+
+    <label>Cantidad</label>
+    <input type="number" name="cantidad" min="1" required>
+
+    <label>Precio unitario</label>
+    <input type="text" name="precio_unitario" inputmode="decimal" required>
+
+    <p><button class="btn" type="submit">Guardar</button>
+        <a href="{{ url_for('ventas.listado') }}">Cancelar</a>
+    </p>
+</form>
+{% endblock %}

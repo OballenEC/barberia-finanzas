@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Nuevo gasto · Barbería{% endblock %}
+{% block content %}
+<h1>Registrar gasto operativo</h1>
+<form method="post">
+    <label>Fecha</label>
+    <input type="date" name="fecha" value="{{ hoy }}" required>
+
+    <label>Descripción</label>
+    <input type="text" name="descripcion" required>
+
+    <label>Categoría</label>
+    <input type="text" name="categoria" placeholder="renta / luz / insumos…" required>
+
+    <label>Importe</label>
+    <input type="text" name="importe" inputmode="decimal" required>
+
+    <label>Método de pago</label>
+    <select name="metodo_pago" required>
+        <option value="efectivo">Efectivo</option>
+        <option value="tarjeta">Tarjeta</option>
+        <option value="transferencia">Transferencia</option>
+        <option value="otro">Otro</option>
+    </select>
+
+    <p><button class="btn" type="submit">Guardar</button>
+        <a href="{{ url_for('gastos.listado') }}">Cancelar</a>
+    </p>
+</form>
+{% endblock %}

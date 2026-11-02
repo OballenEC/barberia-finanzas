@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Ventas producto · Barbería{% endblock %}
+{% block content %}
+<h1>Ventas de producto — semana</h1>
+<p class="muted">Del {{ inicio }} al {{ fin }}</p>
+<a class="btn" href="{{ url_for('ventas.nueva') }}">+ Registrar venta</a>
+
+{% if ventas %}
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>P. unit</th>
+            <th>Total</th>
+            <th>COGS</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in ventas %}
+        <tr>
+            <td>{{ v.fecha }}</td>
+            <td>{{ v.producto_nombre }}</td>
+            <td>{{ v.cantidad }}</td>
+            <td>${{ v.precio_unitario }}</td>
+            <td>${{ v.total_venta }}</td>
+            <td>${{ v.costo_total_snapshot }}</td>
+            <td>{{ v.estado }}</td>
+            <td>
+                {% if v.estado == 'valida' %}
+                <form method="post" action="{{ url_for('ventas.anular', venta_id=v.id) }}"
+                    data-confirm="¿Anular esta venta?">
+                    <input type="text" name="motivo" placeholder="Motivo" required>
+                    <button class="btn btn-secondary" type="submit">Anular</button>
+                </form>
+                {% else %}<span class="muted">{{ v.motivo_anulacion }}</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}<p class="muted">Sin ventas esta semana.</p>{% endif %}
+{% endblock %}
