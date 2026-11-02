@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Reporte diario · Barbería{% endblock %}
+{% block content %}
+<h1>Reporte diario</h1>
+
+<form method="get" class="filtro-fecha">
+    <label>Fecha:</label>
+    <input type="date" name="fecha" value="{{ data.fecha }}">
+    <button class="btn" type="submit">Ver</button>
+</form>
+
+<h2>Resumen del {{ data.fecha }}</h2>
+<table>
+    <tbody>
+        <tr>
+            <th>Ingresos por servicios</th>
+            <td>${{ data.kpis.ingresos_servicios }}</td>
+        </tr>
+        <tr>
+            <th>Ventas de productos</th>
+            <td>${{ data.kpis.ventas_productos }}</td>
+        </tr>
+        <tr>
+            <th>Gastos operativos</th>
+            <td>${{ data.kpis.gastos_operativos }}</td>
+        </tr>
+        <tr>
+            <th>Compras de inventario (info)</th>
+            <td>${{ data.kpis.compras_inventario }}</td>
+        </tr>
+        <tr>
+            <th>Costo de productos vendidos</th>
+            <td>${{ data.kpis.cogs }}</td>
+        </tr>
+        <tr>
+            <th>Comisiones servicios</th>
+            <td>${{ data.kpis.comisiones_servicios }}</td>
+        </tr>
+        <tr>
+            <th>Comisiones productos</th>
+            <td>${{ data.kpis.comisiones_productos }}</td>
+        </tr>
+        <tr>
+            <th><strong>Resultado neto estimado</strong></th>
+            <td><strong>${{ data.kpis.resultado_neto_estimado }}</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Servicios del día</h2>
+{% if data.servicios %}
+<table>
+    <thead>
+        <tr>
+            <th>Hora</th>
+            <th>Servicio</th>
+            <th>Barbero</th>
+            <th>Precio</th>
+            <th>Comisión</th>
+            <th>Pago</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in data.servicios %}
+        <tr>
+            <td>{{ s.fecha_hora[11:16] }}</td>
+            <td>{{ s.servicio_nombre }}</td>
+            <td>{{ s.barbero_nombre or '—' }}</td>
+            <td>${{ s.precio_cobrado }}</td>
+            <td>{% if s.comision_monto %}${{ s.comision_monto }} ({{ s.comision_pct }}%){% else %}—{% endif %}</td>
+            <td>{{ s.metodo_pago }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">Sin servicios registrados.</p>
+{% endif %}
+
+<h2>Ventas de producto del día</h2>
+{% if data.ventas_producto %}
+<table>
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>P. unit</th>
+            <th>Total</th>
+            <th>COGS</th>
+            <th>Comisión</th>
+            <th>Barbero</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for v in data.ventas_producto %}
+        <tr>
+            <td>{{ v.producto_nombre }}</td>
+            <td>{{ v.cantidad }}</td>
+            <td>${{ v.precio_unitario }}</td>
+            <td>${{ v.total_venta }}</td>
+            <td>${{ v.costo_total_snapshot }}</td>
+            <td>{% if v.comision_monto %}${{ v.comision_monto }}{% else %}—{% endif %}</td>
+            <td>{{ v.barbero_nombre or '—' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">Sin ventas de producto.</p>
+{% endif %}
+
+<h2>Gastos del día</h2>
+{% if data.gastos %}
+<table>
+    <thead>
+        <tr>
+            <th>Descripción</th>
+            <th>Categoría</th>
+            <th>Importe</th>
+            <th>Pago</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for g in data.gastos %}
+        <tr>
+            <td>{{ g.descripcion }}</td>
+            <td>{{ g.categoria }}</td>
+            <td>${{ g.importe }}</td>
+            <td>{{ g.metodo_pago }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">Sin gastos registrados.</p>
+{% endif %}
+
+{% if data.compras %}
+<h2>Compras de inventario del día (informativo)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Cant.</th>
+            <th>Costo u.</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in data.compras %}
+        <tr>
+            <td>{{ c.producto_nombre }}</td>
+            <td>{{ c.cantidad }}</td>
+            <td>${{ c.costo_unitario }}</td>
+            <td>${{ c.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

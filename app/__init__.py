@@ -30,4 +30,7 @@ def create_app(config_name=None):
     from .web import routes_ventas
     app.register_blueprint(routes_ventas.bp)
 
+    from .web import routes_reportes
+    app.register_blueprint(routes_reportes.bp)
+
     return app

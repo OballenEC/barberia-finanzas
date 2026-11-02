@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Reporte semanal · Barbería{% endblock %}
+{% block content %}
+  <h1>Reporte semanal</h1>
+  <p class="muted">Semana del {{ data.lunes }} al {{ data.domingo }} (corte dominical)</p>
+
+  <form method="get" class="filtro-fecha">
+    <label>Semana de referencia:</label>
+    <input type="date" name="semana" value="{{ data.lunes }}">
+    <button class="btn" type="submit">Ver</button>
+  </form>
+
+  <h2>Comparación con la semana anterior</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Concepto</th>
+        <th>Esta semana<br>({{ data.lunes }} → {{ data.domingo }})</th>
+        <th>Semana anterior<br>({{ data.lunes_anterior }} → {{ data.domingo_anterior }})</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th>Ingresos por servicios</th>
+          <td>${{ data.kpis_actual.ingresos_servicios }}</td>
+          <td>${{ data.kpis_anterior.ingresos_servicios }}</td></tr>
+      <tr><th>Ventas de productos</th>
+          <td>${{ data.kpis_actual.ventas_productos }}</td>
+          <td>${{ data.kpis_anterior.ventas_productos }}</td></tr>
+      <tr><th>Costo de productos vendidos (COGS)</th>
+          <td>−${{ data.kpis_actual.cogs }}</td>
+          <td>−${{ data.kpis_anterior.cogs }}</td></tr>
+      <tr><th>Gastos operativos</th>
+          <td>−${{ data.kpis_actual.gastos_operativos }}</td>
+          <td>−${{ data.kpis_anterior.gastos_operativos }}</td></tr>
+      <tr><th>Comisiones servicios</th>
+          <td>−${{ data.kpis_actual.comisiones_servicios }}</td>
+          <td>−${{ data.kpis_anterior.comisiones_servicios }}</td></tr>
+      <tr><th>Comisiones productos</th>
+          <td>−${{ data.kpis_actual.comisiones_productos }}</td>
+          <td>−${{ data.kpis_anterior.comisiones_productos }}</td></tr>
+      <tr style="border-top: 2px solid #333;">
+          <th><strong>Resultado neto estimado</strong></th>
+          <td><strong>${{ data.kpis_actual.resultado_neto_estimado }}</strong></td>
+          <td><strong>${{ data.kpis_anterior.resultado_neto_estimado }}</strong></td></tr>
+    </tbody>
+  </table>
+
+  <p class="muted">
+    Compras de inventario esta semana: ${{ data.kpis_actual.compras_inventario }} (informativo, no afecta resultado).
+    Flujo de efectivo estimado: ${{ data.kpis_actual.flujo_efectivo_estimado }}.
+  </p>
+
+  <h2>Desglose por barbero</h2>
+  {% if data.por_barbero %}
+    <table>
+      <thead>
+        <tr>
+          <th>Barbero</th>
+          <th>Servicios</th>
+          <th>Ingresos svc</th>
+          <th>Comisión svc</th>
+          <th>Ventas prod</th>
+          <th>Ingresos prod</th>
+          <th>Comisión prod</th>
+          <th>Total comisión</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for b in data.por_barbero %}
+        <tr>
+          <td>{{ b.nombre }}</td>
+          <td>{{ b.num_servicios }}</td>
+          <td>${{ b.ingresos_svc }}</td>
+          <td>${{ b.comision_svc }}</td>
+          <td>{{ b.num_ventas_prod }}</td>
+          <td>${{ b.ventas_prod }}</td>
+          <td>${{ b.comision_prod }}</td>
+          <td><strong>${{ b.comision_total }}</strong></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">Sin barberos activos.</p>
+  {% endif %}
+
+  <p>
+    <a class="btn" href="{{ url_for('reportes.diario') }}">Ver un día específico</a>
+    <a class="btn btn-secondary" href="{{ url_for('reportes.barbero') }}">Reporte detallado por barbero</a>
+  </p>
+{% endblock %}

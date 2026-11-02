@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Reporte por barbero · Barbería{% endblock %}
+{% block content %}
+<h1>Reporte por barbero</h1>
+<p class="muted">Semana del {{ lunes }} al {{ domingo }}</p>
+
+<form method="get" class="filtro-fecha">
+    <label>Semana de referencia:</label>
+    <input type="date" name="semana" value="{{ lunes }}">
+    <label>Barbero:</label>
+    <select name="barbero_id">
+        <option value="">— Todos —</option>
+        {% for b in barberos %}
+        <option value="{{ b.id }}" {% if barbero_id_sel==b.id %}selected{% endif %}>
+            {{ b.nombre }}
+        </option>
+        {% endfor %}
+    </select>
+    <button class="btn" type="submit">Ver</button>
+</form>
+
+{% if filas %}
+{% for b in filas %}
+<section class="barbero-card">
+    <h2>{{ b.nombre }}</h2>
+    <p class="muted">% por defecto: {{ b.comision_pct_default }}%</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th># Operaciones</th>
+                <th>Ingresos</th>
+                <th>Comisión</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Servicios</th>
+                <td>{{ b.num_servicios }}</td>
+                <td>${{ b.ingresos_svc }}</td>
+                <td>${{ b.comision_svc }}</td>
+            </tr>
+            <tr>
+                <th>Ventas de producto</th>
+                <td>{{ b.num_ventas_prod }}</td>
+                <td>${{ b.ingresos_prod }}</td>
+                <td>${{ b.comision_prod }}</td>
+            </tr>
+            <tr style="border-top: 2px solid #333;">
+                <th><strong>Total</strong></th>
+                <td>{{ b.num_servicios + b.num_ventas_prod }}</td>
+                <td><strong>${{ b.ingresos_svc + b.ingresos_prod }}</strong></td>
+                <td><strong>${{ b.comision_total }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if b.detalle_servicios %}
+    <h3>Detalle de servicios</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Servicio</th>
+                <th>Precio</th>
+                <th>Comisión</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in b.detalle_servicios %}
+            <tr>
+                <td>{{ s.fecha_hora[:16] }}</td>
+                <td>{{ s.servicio_nombre }}</td>
+                <td>${{ s.precio_cobrado }}</td>
+                <td>${{ s.comision_monto or '0.00' }} ({{ s.comision_pct or '—' }}%)</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if b.detalle_productos %}
+    <h3>Detalle de ventas de producto</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Cant.</th>
+                <th>Total</th>
+                <th>Comisión</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in b.detalle_productos %}
+            <tr>
+                <td>{{ p.fecha }}</td>
+                <td>{{ p.producto_nombre }}</td>
+                <td>{{ p.cantidad }}</td>
+                <td>${{ p.total_venta }}</td>
+                <td>${{ p.comision_monto or '0.00' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+{% endfor %}
+{% else %}
+<p class="muted">Sin datos para el periodo seleccionado.</p>
+{% endif %}
+{% endblock %}

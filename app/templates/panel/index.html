@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Panel · Barbería{% endblock %}
+{% block content %}
+<h1>Panel</h1>
+<p class="muted">Semana del {{ lunes }} al {{ domingo }}</p>
+
+<section class="kpis">
+    <h2>Resumen del periodo</h2>
+    <table>
+        <tbody>
+            <tr>
+                <th>Ingresos por servicios</th>
+                <td>${{ kpis.ingresos_servicios }}</td>
+            </tr>
+            <tr>
+                <th>Ventas de productos</th>
+                <td>${{ kpis.ventas_productos }}</td>
+            </tr>
+            <tr>
+                <th>Gastos operativos</th>
+                <td>${{ kpis.gastos_operativos }}</td>
+            </tr>
+            <tr>
+                <th>Compras de inventario (info)</th>
+                <td>${{ kpis.compras_inventario }}</td>
+            </tr>
+            <tr>
+                <th>Costo de productos vendidos</th>
+                <td>${{ kpis.cogs }}</td>
+            </tr>
+            <tr>
+                <th>Margen bruto de productos</th>
+                <td>${{ kpis.margen_bruto_productos }}</td>
+            </tr>
+            <tr>
+                <th>Comisiones servicios</th>
+                <td>${{ kpis.comisiones_servicios }}</td>
+            </tr>
+            <tr>
+                <th>Comisiones productos</th>
+                <td>${{ kpis.comisiones_productos }}</td>
+            </tr>
+            <tr>
+                <th>Total comisiones</th>
+                <td><strong>${{ kpis.comisiones_total }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<section class="resultado">
+    <h2>Resultado neto estimado</h2>
+    <p class="big-number">${{ kpis.resultado_neto_estimado }}</p>
+    <p class="muted">Estimación operativa, no utilidad contable ni fiscal.</p>
+    <p>Flujo de efectivo estimado: <strong>${{ kpis.flujo_efectivo_estimado }}</strong></p>
+    <p class="muted">
+        Las compras de inventario no restan del resultado. Solo se descuenta el
+        costo de lo efectivamente vendido (COGS).
+    </p>
+</section>
+
+<section class="accesos">
+    <h2>Accesos rápidos</h2>
+    <p>
+        <a class="btn" href="{{ url_for('reportes.semanal') }}">Reporte semanal</a>
+        <a class="btn" href="{{ url_for('reportes.diario') }}">Reporte diario</a>
+        <a class="btn" href="{{ url_for('reportes.barbero') }}">Reporte por barbero</a>
+    </p>
+</section>
+{% endblock %}
