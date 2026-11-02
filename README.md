@@ -1,4 +1,4 @@
-# Barbería · Sistema de Control Financiero
+﻿# Barbería · Sistema de Control Financiero
 
 Aplicación web adaptable a celular y computadora para registrar las operaciones diarias de una barbería y consultar reportes financieros.
 
@@ -185,3 +185,7 @@ Contacto: [GitHub](https://github.com/OballenEC)
 ## Licencia
 
 Proyecto privado. Cliente real en producción. Código disponible para revisión bajo solicitud.
+## Demo en Vivo
+
+Puedes ver una demostración funcional del sistema en:
+[https://OballenEC.pythonanywhere.com](https://OballenEC.pythonanywhere.com)
