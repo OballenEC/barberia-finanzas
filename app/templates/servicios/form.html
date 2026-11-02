@@ -10,6 +10,18 @@
         {% endfor %}
     </select>
 
+    <label>Barbero</label>
+    <select name="barbero_id">
+        <option value="">— Sin asignar —</option>
+        {% for b in barberos %}
+        <option value="{{ b.id }}">{{ b.nombre }} ({{ b.comision_pct_default }}%)</option>
+        {% endfor %}
+    </select>
+
+    <label>Comisión % (opcional, sobreescribe default)</label>
+    <input type="text" name="comision_pct_override" inputmode="decimal"
+        placeholder="35.00 o 40.00 — vacío = usar default del barbero">
+
     <label>Fecha y hora</label>
     <input type="datetime-local" name="fecha_hora" value="{{ ahora }}" required>
 

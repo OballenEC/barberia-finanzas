@@ -11,7 +11,9 @@
     <tr>
       <th>Fecha</th>
       <th>Servicio</th>
+      <th>Barbero</th>
       <th>Precio</th>
+      <th>Comisión</th>
       <th>Pago</th>
       <th>Estado</th>
       <th></th>
@@ -22,7 +24,15 @@
     <tr>
       <td>{{ v.fecha_hora[:16] }}</td>
       <td>{{ v.servicio_nombre }}</td>
+      <td>{{ v.barbero_nombre or '—' }}</td>
       <td>${{ v.precio_cobrado }}</td>
+      <td>
+        {% if v.comision_monto %}
+        ${{ v.comision_monto }} ({{ v.comision_pct }}%)
+        {% else %}
+        —
+        {% endif %}
+      </td>
       <td>{{ v.metodo_pago }}</td>
       <td>{{ v.estado }}</td>
       <td>

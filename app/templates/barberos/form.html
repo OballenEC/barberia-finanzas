@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Nuevo barbero · Barbería{% endblock %}
+{% block content %}
+<h1>Nuevo barbero</h1>
+<form method="post">
+    <label>Nombre</label>
+    <input type="text" name="nombre" required>
+
+    <label>Comisión por defecto (%)</label>
+    <input type="text" name="comision_pct_default" inputmode="decimal" value="35.00" required>
+
+    <p class="muted">Ej. 35 para 35%, 40 para 40%. Puede sobreescribirse al registrar una venta.</p>
+
+    <p><button class="btn" type="submit">Guardar</button>
+        <a href="{{ url_for('barberos.listado') }}">Cancelar</a>
+    </p>
+</form>
+{% endblock %}

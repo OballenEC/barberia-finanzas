@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Barberos · Barbería{% endblock %}
+{% block content %}
+<h1>Barberos</h1>
+<a class="btn" href="{{ url_for('barberos.nuevo') }}">+ Nuevo barbero</a>
+
+{% if barberos %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Comisión %</th>
+            <th>Activo</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b in barberos %}
+        <tr>
+            <td>{{ b.nombre }}</td>
+            <td>{{ b.comision_pct_default }}%</td>
+            <td>{{ 'Sí' if b.activo else 'No' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="muted">Sin barberos registrados.</p>
+{% endif %}
+{% endblock %}

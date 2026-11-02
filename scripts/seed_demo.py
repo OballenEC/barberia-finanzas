@@ -8,6 +8,7 @@ from app.data.db import init_schema
 from app.domain import servicios as dom_svc
 from app.domain import gastos as dom_gastos
 from app.domain import inventario as dom_inv
+from app.domain import barberos as dom_barberos
 
 
 def ya_existe(conn, table, seed_key):
@@ -22,6 +23,21 @@ def upsert_catalogos(conn):
     conn.commit()
 
 
+def seed_barberos(conn):
+    barberos = [
+        ("demo-b-1", "Luis",  "35.00"),
+        ("demo-b-2", "Juan",  "40.00"),
+    ]
+    for key, nombre, pct in barberos:
+        if not ya_existe(conn, "barberos", key):
+            bid = dom_barberos.crear_barbero(
+                conn, nombre=nombre, comision_pct_default=pct,
+            )
+            conn.execute(
+                "UPDATE barberos SET seed_key = ? WHERE id = ?", (key, bid))
+            conn.commit()
+
+
 def seed_operaciones(conn):
     hoy = date.today()
     lunes = hoy - timedelta(days=hoy.weekday())
@@ -30,6 +46,8 @@ def seed_operaciones(conn):
         "SELECT id, nombre FROM servicios")}
     prod_by_codigo = {r["codigo_interno"]: r["id"] for r in conn.execute(
         "SELECT id, codigo_interno FROM productos WHERE codigo_interno IS NOT NULL")}
+    barberos = {r["nombre"]: r["id"] for r in conn.execute(
+        "SELECT id, nombre FROM barberos")}
 
     def d(offset):
         return (lunes + timedelta(days=offset)).isoformat()
@@ -37,20 +55,22 @@ def seed_operaciones(conn):
     CERA = prod_by_codigo["PROD-CERA"]
     SHAMP = prod_by_codigo["PROD-SHAMP"]
     ACEITE = prod_by_codigo["PROD-ACEITE"]
+    LUIS = barberos["Luis"]
+    JUAN = barberos["Juan"]
 
     ops = [
         ("compra",     "demo-c-1",  d(0), CERA,  10, "80.00"),
         ("compra",     "demo-c-2",  d(0), SHAMP, 20, "60.00"),
         ("compra",     "demo-c-3",  d(0), ACEITE, 8, "90.00"),
-        ("venta_svc",  "demo-vs-1", d(0) + "T12:00:00", "Corte",         "100.00", "efectivo"),
-        ("venta_svc",  "demo-vs-2", d(0) + "T13:00:00", "Barba",         "70.00",  "efectivo"),
+        ("venta_svc",  "demo-vs-1", d(0) + "T12:00:00", "Corte",         "100.00", "efectivo", LUIS),
+        ("venta_svc",  "demo-vs-2", d(0) + "T13:00:00", "Barba",         "70.00",  "efectivo", JUAN),
         ("gasto",      "demo-g-1",  d(0), "Renta local (demo)", "renta", "800.00"),
-        ("venta_svc",  "demo-vs-3", d(1) + "T11:00:00", "Corte + Barba", "150.00", "tarjeta"),
+        ("venta_svc",  "demo-vs-3", d(1) + "T11:00:00", "Corte + Barba", "150.00", "tarjeta",  LUIS),
         ("venta_prod", "demo-vp-1", d(1), CERA,  2, "150.00"),
         ("venta_prod", "demo-vp-2", d(1), SHAMP, 3, "120.00"),
         ("compra",     "demo-c-4",  d(2), CERA,  5, "85.00"),
         ("gasto",      "demo-g-2",  d(2), "Luz (demo)", "servicios", "250.00"),
-        ("venta_svc",  "demo-vs-4", d(3) + "T10:00:00", "Corte", "100.00", "efectivo"),
+        ("venta_svc",  "demo-vs-4", d(3) + "T10:00:00", "Corte", "100.00", "efectivo", JUAN),
         ("venta_prod", "demo-vp-3", d(3), ACEITE, 2, "180.00"),
         ("ajuste",     "demo-aj-1", d(4), SHAMP, -1, "Merma por producto danado (demo)"),
     ]
@@ -70,6 +90,7 @@ def seed_operaciones(conn):
                 vid = dom_svc.registrar_venta_servicio(
                     conn, servicio_id=servicios[op[3]], fecha_hora=op[2],
                     precio_cobrado=op[4], metodo_pago=op[5],
+                    barbero_id=op[6],
                 )
                 conn.execute("UPDATE ventas_servicio SET seed_key = ? WHERE id = ?", (key, vid))
                 conn.commit()
@@ -109,6 +130,7 @@ def main():
         conn.row_factory = sqlite3.Row
         conn.execute("PRAGMA foreign_keys = ON")
         upsert_catalogos(conn)
+        seed_barberos(conn)
         seed_operaciones(conn)
     print(f"[OK] Datos demo cargados en {app.config['DATABASE']}")
 
